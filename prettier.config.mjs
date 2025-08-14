@@ -2,7 +2,11 @@
 // const config: Config
 
 const config = {
-  plugins: ['@trivago/prettier-plugin-sort-imports', 'prettier-plugin-jsdoc'],
+  plugins: [
+    '@trivago/prettier-plugin-sort-imports',
+    'prettier-plugin-jsdoc',
+    'prettier-plugin-packagejson'
+  ],
   trailingComma: 'none',
   tabWidth: 2,
   semi: false,

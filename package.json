@@ -1,8 +1,22 @@
 {
   "name": "libhtcpcp",
+  "version": "0.0.1",
+  "description": "A modern TypeScript library for coffee pots, teapots, and more!",
+  "keywords": [
+    "typescript",
+    "coffee",
+    "tea",
+    "april-fools",
+    "rfc"
+  ],
+  "homepage": "https://github.com/acandoo/libhtcpcp#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/acandoo/libhtcpcp.git"
+  },
+  "license": "LGPL-3.0-or-later",
+  "author": "acandoo",
   "type": "module",
-  "version": "1.0.0",
-  "description": "",
   "exports": {
     "import": {
       "types": "./dist/index.d.ts",
@@ -12,23 +26,13 @@
   "files": [
     "dist/"
   ],
-  "bin": {
-    "pi-htcpcp": "./dist/index.js"
-  },
-  "engines": {
-    "node": ">=18"
-  },
   "scripts": {
-    "dev": "tsx src/index.ts",
     "build": "pkgroll --minify",
-    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
     "preinstall": "npx only-allow pnpm",
+    "start": "node dist/index.js",
     "test": "tsx --test"
   },
-  "keywords": [],
-  "author": "",
-  "license": "",
-  "packageManager": "pnpm@10.13.1",
   "devDependencies": {
     "@eslint/js": "^9.33.0",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
@@ -40,8 +44,13 @@
     "pkgroll": "^2.15.3",
     "prettier": "^3.6.2",
     "prettier-plugin-jsdoc": "^1.3.3",
+    "prettier-plugin-packagejson": "^2.5.19",
     "tsx": "^4.20.4",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.39.1"
+  },
+  "packageManager": "pnpm@10.13.1",
+  "engines": {
+    "node": ">=18"
   }
 }
