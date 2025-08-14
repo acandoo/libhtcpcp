@@ -1,0 +1,47 @@
+{
+  "name": "libhtcpcp",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "exports": {
+    "import": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist/"
+  ],
+  "bin": {
+    "pi-htcpcp": "./dist/index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "build": "pkgroll --minify",
+    "start": "node dist/index.js",
+    "preinstall": "npx only-allow pnpm",
+    "test": "tsx --test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "",
+  "packageManager": "pnpm@10.13.1",
+  "devDependencies": {
+    "@eslint/js": "^9.33.0",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
+    "@tsconfig/node-lts": "^22.0.2",
+    "@types/node": "^24.2.1",
+    "eslint": "^9.33.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^16.3.0",
+    "pkgroll": "^2.15.3",
+    "prettier": "^3.6.2",
+    "prettier-plugin-jsdoc": "^1.3.3",
+    "tsx": "^4.20.4",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.39.1"
+  }
+}
