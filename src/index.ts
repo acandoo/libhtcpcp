@@ -1,15 +1,25 @@
 import http from 'node:http'
 
 import * as HTTP_CODES from './http-codes.ts'
-import { type PotOptions, type PotOptionsBase, type PotTypes } from './types.ts'
+import {
+  type Endpoints,
+  type Paths,
+  type PotMethod,
+  type PotOptions,
+  type PotOptionsBase,
+  type PotTypes
+} from './types.ts'
 
 export class HTCPCPServer<T extends PotTypes = PotTypes> {
   listen: http.Server['listen']
-  paths: Array<`/${string}`> = ['/']
+  get paths() {
+    return Object.keys(this.#endpoints) as Paths[]
+  }
   capabilities: Set<T>
   createCoffeePot?: (args: PotOptionsBase) => void
   createTeapot?: (args: PotOptionsBase) => void
   #server: http.Server
+  #endpoints: Endpoints = {}
 
   static readonly HTTP = HTTP_CODES
 
@@ -40,43 +50,63 @@ export class HTCPCPServer<T extends PotTypes = PotTypes> {
       }
     }
 
-    this.#server = http.createServer((req, res) => {
-      // implement RFC 2324 first
-      if (
-        this.capabilities.size === 1 &&
-        this.capabilities.has('coffee' as T)
-      ) {
-        switch (req.method) {
-          case 'GET':
-            break
-
-          // POST requests are deprecated; fall over to BREW
-          case 'POST':
-          case 'BREW':
-            break
-
-          case 'PROPFIND':
-            break
-          case 'WHEN':
-            break
-          default:
-            res
-              .writeHead(HTCPCPServer.HTTP.METHOD_NOT_ALLOWED, {
-                // TODO add proper headers
-              })
-              .end()
-        }
-      }
-    })
-
-    this.#server.on('request', () => {})
+    this.#server = http.createServer(this.#serverFn)
     this.listen = this.#server.listen
   }
 
-  #createPot<T extends PotTypes>(opts: PotOptions<T>): void {}
+  #serverFn(req: http.IncomingMessage, res: http.ServerResponse): void {
+    // implement RFC 2324 first
+    if (this.capabilities.size === 1 && this.capabilities.has('coffee' as T)) {
+      if (
+        req.method &&
+        ['GET', 'POST', 'BREW', 'PROPFIND', 'WHEN'].includes(req.method)
+      ) {
+        const httpMethod = (
+          req.method === 'POST' ? 'BREW' : req.method
+        ) as PotMethod
+        // compare path to internal object paths, execute appropriate brew function
+        for (const [path, methods] of Object.entries(this.#endpoints)) {
+          /**
+           * NOTE: according to section
+           * [5.1.2](https://datatracker.ietf.org/doc/html/rfc2068#section-5.1.2)
+           * of the HTTP 1.1 specification, the absolute URI MUST be accepted
+           * and parsed accordingly.
+           */
+          if (
+            req.url &&
+            [path, `http://${process.env.HOST ?? 'localhost'}${path}`].includes(
+              req.url
+            )
+          ) {
+            methods[httpMethod](req, res)
+          }
+        }
+      } else {
+        res
+          .writeHead(HTCPCPServer.HTTP.METHOD_NOT_ALLOWED, {
+            // TODO add proper headers
+          })
+          .end()
+      }
+    }
+  }
+
+  #createPot<T extends PotTypes>(opts: PotOptions<T>): void {
+    // dummy to resolve type error
+    this.#endpoints = {
+      '/': {
+        GET: () => {},
+        BREW: () => {},
+        WHEN: () => {},
+        PROPFIND: () => {}
+      }
+    }
+  }
 }
 
 // do you even *tree shake*, bro?
 export const createHTCPCPServer = (
   ...args: ConstructorParameters<typeof HTCPCPServer>
 ) => new HTCPCPServer(...args)
+
+new HTCPCPServer()
