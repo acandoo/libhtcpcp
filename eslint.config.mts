@@ -1,5 +1,5 @@
 import eslintConfigPrettier from 'eslint-config-prettier'
-import { defineConfig } from 'eslint/config'
+import tsdoc from 'eslint-plugin-tsdoc'
 import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
@@ -13,5 +13,6 @@ export default tseslint.config(
     languageOptions: { globals: globals.node }
   },
   tseslint.configs.recommended,
-  eslintConfigPrettier
+  eslintConfigPrettier,
+  tsdoc.rules
 )
