@@ -16,14 +16,12 @@ export class HTCPCPServer<T extends PotTypes = PotTypes> {
     return Object.keys(this.#endpoints) as Paths[]
   }
   capabilities: Set<T>
-  createCoffeePot: 'coffee' extends T
-    ? (args: PotOptionsBase) => typeof this
-    : T extends 'coffee'
-      ? (args: PotOptionsBase) => typeof this
-      : undefined
-  createTeapot: 'coffee' extends T
-    ? (args: PotOptionsBase) => typeof this
-    : undefined
+  createCoffeePot:
+    | ('coffee' extends T ? (args: PotOptionsBase) => this : undefined)
+    | undefined
+  createTeapot:
+    | ('tea' extends T ? (args: PotOptionsBase) => this : undefined)
+    | undefined
   #server: http.Server
   #endpoints: Endpoints = {}
 
@@ -58,8 +56,16 @@ export class HTCPCPServer<T extends PotTypes = PotTypes> {
     for (const capability of this.capabilities) {
       const potFn = (args: PotOptionsBase) =>
         this.createPot({ type: capability, ...args })
-      if (capability === 'coffee') this.createCoffeePot = potFn
-      if (capability === 'tea') this.createTeapot = potFn
+      if (capability === 'coffee') {
+        this.createCoffeePot = potFn as 'coffee' extends T
+          ? (args: PotOptionsBase) => this
+          : undefined
+      }
+      if (capability === 'tea') {
+        this.createTeapot = potFn as 'tea' extends T
+          ? (args: PotOptionsBase) => this
+          : undefined
+      }
     }
 
     this.#server = http.createServer(this.#serverFn)
