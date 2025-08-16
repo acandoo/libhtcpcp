@@ -39,14 +39,13 @@ export class HTCPCPServer<T extends PotTypes = PotTypes> {
     }
 
     for (const capability of this.capabilities) {
-      switch (capability) {
-        case 'coffee':
-          this.createCoffeePot = (args) =>
-            this.#createPot({ type: 'coffee', ...args })
-          break
-        case 'tea':
-          this.createTeapot = (args) =>
-            this.#createPot({ type: 'tea', ...args })
+      if (capability === 'coffee'): {
+        this.createCoffeePot = (args) =>
+          this.#createPot({ type: 'coffee', ...args })
+      }
+      if (capability === 'tea') {
+        this.createTeapot = (args) =>
+          this.#createPot({ type: 'tea', ...args })
       }
     }
 
