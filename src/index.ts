@@ -103,7 +103,7 @@ export class HTCPCPServer<T extends PotTypes = PotTypes> {
     }
   }
 
-  #createPot<T extends PotTypes>(opts: PotOptions<T>): void {
+  createPot(opts: PotOptions<T>): void {
     // dummy to resolve type error
     this.#endpoints = {
       '/': {
