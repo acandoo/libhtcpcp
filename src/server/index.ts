@@ -80,7 +80,7 @@ export class HTCPCPServer<T extends PotTypes = PotTypes> {
         for (const [path, methods] of Object.entries(this.#endpoints)) {
           /**
            * NOTE: according to section
-           * [5.1.2](https://datatracker.ietf.org/doc/html/rfc2068#section-5.1.2)
+           * {@link https://datatracker.ietf.org/doc/html/rfc2068#section-5.1.2 | 5.1.2}
            * of the HTTP 1.1 specification, the absolute URI MUST be accepted
            * and parsed accordingly.
            */
