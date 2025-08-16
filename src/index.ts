@@ -104,8 +104,9 @@ export class HTCPCPServer<T extends PotTypes = PotTypes> {
   }
 
   createPot(opts: PotOptions<T>): void {
-    // dummy to resolve type error
+    // dummy
     this.#endpoints = {
+      ...this.#endpoints,
       '/': {
         GET: () => {},
         BREW: () => {},
