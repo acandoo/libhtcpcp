@@ -48,7 +48,7 @@ export class HTCPCPServer<T extends PotTypes = PotTypes> {
       : (new Set(['coffee', 'tea']) as Set<T>)
 
     if (this.capabilities.size === 0) {
-      throw new Error('You must specify at least one capability')
+      throw Error('You must specify at least one capability')
     }
 
     for (const capability of this.capabilities) {
