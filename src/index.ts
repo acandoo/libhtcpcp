@@ -103,10 +103,3 @@ export class HTCPCPServer<T extends PotTypes = PotTypes> {
     }
   }
 }
-
-// do you even *tree shake*, bro?
-export const createHTCPCPServer = (
-  ...args: ConstructorParameters<typeof HTCPCPServer>
-) => new HTCPCPServer(...args)
-
-new HTCPCPServer()
