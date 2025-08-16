@@ -23,19 +23,19 @@ export class HTCPCPServer<T extends PotTypes = PotTypes> {
 
   static readonly HTTP = HTTP_CODES
 
-  /**
-   * Creates a server with default capabilities ('coffee' and 'tea').
-   */
+  /** Creates a server with default capabilities ('coffee' and 'tea'). */
   constructor()
 
   /**
    * Creates a server with a single capability.
+   *
    * @param capability The type of beverage that can be brewed.
    */
   constructor(capability: T)
 
   /**
    * Creates a server with a set of capabilities.
+   *
    * @param capabilities The types of beverages that can be brewed.
    */
   constructor(capabilities: Set<T>)
