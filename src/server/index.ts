@@ -1,29 +1,34 @@
 import http from 'node:http'
 
-import * as HTTPCodes from '../http-codes.ts'
 import {
+  ALLOWED_POT_METHODS,
+  type AllowedPotMethod,
+  COFFEE_URIS,
   type Endpoints,
   type Paths,
   type PotMethod,
   type PotOptions,
   type PotOptionsBase,
   type PotTypes
-} from '../types.ts'
+} from '../helpers.ts'
+import * as HTTPCodes from '../http-codes.ts'
+import getPaths from './get-paths.ts'
 
 export class HTCPCPServer<T extends PotTypes = PotTypes> {
   listen: http.Server['listen']
   get paths() {
-    return Object.keys(this.#endpoints) as Paths[]
+    return getPaths(this.#pots)
   }
   capabilities: Set<T>
-  createCoffeePot:
-    | ('coffee' extends T ? (args: PotOptionsBase) => this : undefined)
-    | undefined
+  createCoffeePot: (T extends 'coffee' ? (args: PotOptionsBase) => this : never)
   createTeapot:
     | ('tea' extends T ? (args: PotOptionsBase) => this : undefined)
     | undefined
   #server: http.Server
-  #endpoints: Endpoints = {}
+  get #endpoints(): Endpoints {
+    for (const pot of this.#pots)
+  }
+  #pots: PotOptions<T>[] = []
 
   /** Creates a server with default capabilities ('coffee' and 'tea'). */
   constructor()
@@ -57,9 +62,7 @@ export class HTCPCPServer<T extends PotTypes = PotTypes> {
       const potFn = (args: PotOptionsBase) =>
         this.createPot({ type: capability, ...args })
       if (capability === 'coffee') {
-        this.createCoffeePot = potFn as 'coffee' extends T
-          ? (args: PotOptionsBase) => this
-          : undefined
+        this.createCoffeePot = potFn 
       }
       if (capability === 'tea') {
         this.createTeapot = potFn as 'tea' extends T
@@ -77,7 +80,7 @@ export class HTCPCPServer<T extends PotTypes = PotTypes> {
     if (this.capabilities.size === 1 && this.capabilities.has('coffee' as T)) {
       if (
         req.method &&
-        ['GET', 'POST', 'BREW', 'PROPFIND', 'WHEN'].includes(req.method)
+        ALLOWED_POT_METHODS.includes(req.method as AllowedPotMethod)
       ) {
         const httpMethod = (
           req.method === 'POST' ? 'BREW' : req.method
@@ -92,9 +95,12 @@ export class HTCPCPServer<T extends PotTypes = PotTypes> {
            */
           if (
             req.url &&
-            [path, `http://${process.env.HOST ?? 'localhost'}${path}`].includes(
-              req.url
-            )
+            [
+              path,
+              ...COFFEE_URIS.map(
+                (uri) => `${uri}://${process.env.HOST ?? 'localhost'}${path}`
+              )
+            ].includes(req.url)
           ) {
             methods[httpMethod](req, res)
           }
@@ -110,16 +116,9 @@ export class HTCPCPServer<T extends PotTypes = PotTypes> {
   }
 
   createPot(opts: PotOptions<T>): typeof this {
-    // dummy
-    this.#endpoints = {
-      ...this.#endpoints,
-      '/': {
-        GET: () => {},
-        BREW: () => {},
-        WHEN: () => {},
-        PROPFIND: () => {}
-      }
-    }
+    if (opts.type === 'coffee')
+    if (opts.type === 'tea')
+    this.#pots.push(opts)
     return this
   }
 }
